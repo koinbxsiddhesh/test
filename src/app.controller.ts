@@ -1,12 +1,31 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Request } from 'express';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Req() request: Request): { message: string; ip: string } {
+    console.log('req',request.ips);
+    
+    // Extract the client IP address
+    let clientIp:any = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+
+    // Handle potential IPv6 format
+    if (clientIp && clientIp.includes(',')) {
+      clientIp = clientIp.split(',')[0]; // Get the first IP if multiple are present
+    }
+
+    if (clientIp.startsWith('::ffff:')) {
+      clientIp = clientIp.replace('::ffff:', ''); // Convert to IPv4
+    }
+
+    // Return a message along with the IP address
+    return {
+      message: this.appService.getHello(),
+      ip: clientIp,
+    };
   }
 }
