@@ -8,7 +8,9 @@ export class AppController {
 
   @Get()
   getHello(@Req() request: Request): { message: string; ip: string } {
-    console.log('req',request.ips);
+    console.log('req',request.ip);
+    console.log(`request.headers['x-forwarded-for'] `,request.headers['x-forwarded-for'] );
+    console.log(`request.socket.remoteAddress`, request.socket.remoteAddress);
     
     // Extract the client IP address
     let clientIp:any = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
