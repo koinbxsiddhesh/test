@@ -7,10 +7,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(@Req() request: Request): { message: string; ip: string } {
+  getHello(@Req() request: Request): { message: string; ip: string ,address: any} {
     console.log('req',request.ip);
     console.log(`request.headers['x-forwarded-for'] `,request.headers['x-forwarded-for'] );
     console.log(`request.socket.remoteAddress`, request.socket.remoteAddress);
+    console.log(`request.socket.address`, request.socket.address());
     
     // Extract the client IP address
     let clientIp:any = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
@@ -28,6 +29,7 @@ export class AppController {
     return {
       message: this.appService.getHello(),
       ip: clientIp,
+      address: request.socket.address()
     };
   }
 }
